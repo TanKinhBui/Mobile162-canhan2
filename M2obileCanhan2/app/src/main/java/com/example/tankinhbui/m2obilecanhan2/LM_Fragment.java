@@ -14,4 +14,11 @@ public class LM_Fragment extends Fragment{
         return inflater.inflate(R.layout.lm_fragment, container, false);
     }
 
+    public static LM_Fragment newInstance(String s) {
+        LM_Fragment fragment = new LM_Fragment();
+        Bundle args = new Bundle();
+        args.putString("strArg1", s);
+        fragment.setArguments(args);
+        return fragment;
+    }
 }

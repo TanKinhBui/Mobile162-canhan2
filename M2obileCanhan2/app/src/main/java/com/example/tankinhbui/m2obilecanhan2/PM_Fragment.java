@@ -14,4 +14,13 @@ public class PM_Fragment extends Fragment{
         return inflater.inflate(R.layout.pm_fragment, container, false);
     }
 
+    public static PM_Fragment newInstance(String s) {
+        PM_Fragment fragment = new PM_Fragment();
+        Bundle args = new Bundle();
+        args.putString("strArg1", s);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
 }

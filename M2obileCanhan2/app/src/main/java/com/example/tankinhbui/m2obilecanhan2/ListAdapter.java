@@ -29,29 +29,29 @@ public class ListAdapter extends ArrayAdapter<DateA> {
             view =  inflater.inflate(R.layout.item, null);
         }
         DateA p = getItem(position);
-        Log.e("possssssssssssssss", String.valueOf(position));
+
 
             // Anh xa + Gan gia tri
             TextView tv0 = (TextView) view.findViewById(R.id.iDate);
-            tv0.setText(p.getDate());
+            tv0.setText("              Ngày sổ      " + p.getDate());
             TextView tv1 = (TextView) view.findViewById(R.id.igiai1);
-            tv1.setText(p.getGiai1());
+            tv1.setText("G1iả 1:   " +p.getGiai1());
             TextView tv2 = (TextView) view.findViewById(R.id.igiai2);
-            tv2.setText(String.valueOf(p.getGiai2()));
+            tv2.setText("G1iả 2:   " +p.getGiai2());
             TextView tv3 = (TextView) view.findViewById(R.id.igiai3);
-            tv2.setText(String.valueOf(p.getGiai3()));
+            tv3.setText("G1iả 3:   " + p.getGiai3());
             TextView tv4 = (TextView) view.findViewById(R.id.igiai4);
-            tv2.setText(String.valueOf(p.getGiai4()));
+            tv4.setText("G1iả 4:   " +p.getGiai4());
             TextView tv5 = (TextView) view.findViewById(R.id.igiai5);
-            tv2.setText(String.valueOf(p.getGiai5()));
+            tv5.setText("G1iả 5:   " +p.getGiai5());
             TextView tv6 = (TextView) view.findViewById(R.id.igiai6);
-            tv2.setText(String.valueOf(p.getGiai6()));
+            tv6.setText("G1iả 6:   " +p.getGiai6());
             TextView tv7 = (TextView) view.findViewById(R.id.igiai7);
-            tv2.setText(String.valueOf(p.getGiai7()));
+            tv7.setText("G1iả 7:   " +p.getGiai7());
             TextView tv8 = (TextView) view.findViewById(R.id.igiai8);
-            tv2.setText(String.valueOf(p.getGiai8()));
+            tv8.setText("G1iả 8:   " +p.getGiai8());
             TextView tvDB = (TextView) view.findViewById(R.id.igiaiDB);
-            tv2.setText(String.valueOf(p.getDB()));
+            tvDB.setText("G1iả :   " +p.getDB());
 
         return view;
     }

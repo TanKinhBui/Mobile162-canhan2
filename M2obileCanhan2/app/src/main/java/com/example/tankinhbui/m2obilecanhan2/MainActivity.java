@@ -7,7 +7,11 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,15 +24,22 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity {
-    ListView lv, lv1;
+    ListView lv, lv1, lv2;
+    FragmentManager fragmentManager = getFragmentManager();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+    FragmentTransaction ft;
+    PM_Fragment redFragment;
+    LM_Fragment blueFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         lv = (ListView) findViewById(R.id.listprovince);
-        lv1 = (ListView) findViewById(R.id.listview1);
+        lv1 = (ListView) findViewById(R.id.listviewmain);
+        lv2 = (ListView) findViewById(R.id.listviewdate);
 
         Configuration config = getResources().getConfiguration();
         runOnUiThread(new Runnable() {
@@ -38,20 +49,37 @@ public class MainActivity extends Activity {
             }
         });
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // create a new BLUE fragment - show it
+       // ft = getFragmentManager().beginTransaction();
+        //blueFragment = LM_Fragment.newInstance("first-blue");
+        //ft.replace(android.R.id.content, blueFragment);
+        //ft.commit();
+// create a new RED fragment - show it
 
 
+    }
+    // MainCallback implementation (receiving messages coming from Fragments)
 
-        if(config.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            LM_Fragment lm_Fragment = new LM_Fragment();
-            fragmentTransaction.replace(android.R.id.content, lm_Fragment);
-        }else{
-            PM_Fragment pm_Fragment = new PM_Fragment();
-            fragmentTransaction.replace(android.R.id.content, pm_Fragment);
+    public void onMsgFromFragToMain(String sender, String strValue) {
+// show message arriving to MainActivity
+        Toast.makeText(getApplication(),
+                " MAIN GOT>> " + sender + "\n" + strValue, Toast.LENGTH_LONG)
+                .show();
+        if (sender.equals("RED-FRAG")) {
+// TODO: if needed, do here something on behalf of the RED fragment
         }
+        if (sender.equals("BLUE-FRAG")) {
+            try {
+// forward blue-data to redFragment using its callback method
+                Toast.makeText(getApplication(),
+                        " MAIN GOT>> " + sender + "\n" + strValue, Toast.LENGTH_LONG)
+                        .show();
 
-        fragmentTransaction.commit();
+            } catch (Exception e) {
+                Log.e("ERROR", "onStrFromFragToMain " + e.getMessage());
+            }
+        }
     }
 
     class ReadJSON extends AsyncTask<String, Integer, String> {
@@ -68,9 +96,11 @@ public class MainActivity extends Activity {
                 JSONObject root = new JSONObject(s);
                 JSONArray arrayProvince = root.names();
                 //Toast.makeText(MainActivity.this, arrayProvince.toString(), Toast.LENGTH_LONG).show();
-                ArrayList<Area> area = new ArrayList<Area>();
+                final ArrayList<Area> area = new ArrayList<Area>();
+                ArrayList<String> listProvince = new ArrayList<String>();
                 for (int i=0; i<arrayProvince.length();i++) {
                     String tmp = arrayProvince.getString(i);
+                    listProvince.add(tmp);
                     ArrayList<DateA> kqDate = new ArrayList<DateA>();
                     JSONObject province = root.getJSONObject(tmp);
                     JSONArray arrayDate = province.names();
@@ -120,20 +150,44 @@ public class MainActivity extends Activity {
                     kkk.setArea(tmp);
                     kkk.setDate(kqDate);
                     area.add(kkk);
-                    for (int t = 0; t < kqDate.size(); t++)
-                        Log.e("++++++++++++++", kqDate.get(t).getDate());
-                    /*
-                    ArrayAdapter adapter = new ArrayAdapter(
-                            MainActivity.this,
-                            android.R.layout.simple_list_item_1,
-                            kqDate
-                    );
-                    lv1.setAdapter(adapter);
-                    */
+                    for (int t = 0; t < area.size(); t++) {
+                        Log.e("++++++++++++++", area.get(t).getArea());
+                        for (int a=0;a<area.get(t).getDate().size();a++) {
+                            Log.e("--------------", area.get(t).getDate().get(a).getDate());
+                        }
+                    }
 
                     //Toast.makeText(MainActivity.this, kkk.toString(), Toast.LENGTH_LONG).show();
                     //Toast.makeText(MainActivity.this, arrayDate.toString(), Toast.LENGTH_LONG).show();
+
                 }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        MainActivity.this,
+                        android.R.layout.simple_list_item_1,
+                        listProvince
+                );
+                lv1.setAdapter(adapter);
+                lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Area temp = area.get(position);
+                        ArrayList<DateA> tmpdate1 = temp.getDate();
+                        for (int p = 0; p<tmpdate1.size();p++){
+                            Log.e("------asd", tmpdate1.get(p).getDate());
+                            Log.e("------asd", tmpdate1.get(p).getGiai1());
+                        }
+                        ListAdapter adapter1 = new ListAdapter(
+                                MainActivity.this,
+                                R.layout.item,
+                                tmpdate1
+                        );
+                        lv2.setAdapter(adapter1);
+
+                    }
+                });
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
